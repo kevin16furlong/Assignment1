@@ -1,15 +1,21 @@
-  float value;
-  float high=0.0f, low=1000.0f;
-  int lowIndex;
-  int highIndex;
-  int start = 1850;
-  int count=0;
-  float sum =0.00;
-  float avg=0.00;
-  float y=1850;
+float value;
+float highC=0.0f, lowC=1000.0f;
+float highW=0.0f, lowW=1000.0f;
+int lowIndex;
+int highIndex;
+int start = 1900;
+int count=0;
+float sumH =0.00;
+float sumC =0.00;
+float avgH =0.00;
+float avgC =0.00;
+float y=1900;
   
-  String [] years ={"1900","1910","1920","1930","1940","1950","1960","1970","1980","1990","2000","2010"};
-  // float[] rainfall;
+//array
+ArrayList<ArrayList<Float>> data = new ArrayList<ArrayList<Float>>();
+  
+String [] years ={"1900","1910","1920","1930","1940","1950","1960","1970","1980","1990","2000","2010"};
+// float[] rainfall;
 color randomColor()
 {
   return color(random(0, 255), random(0, 255), random(0, 255));
@@ -18,58 +24,82 @@ color randomColor()
   
 void setup()
 {
-    background(0);
-    size(500, 500);
-    fill(255);
-  String fsval;
+ background(0);
+ size(500, 500);
+ fill(255);
+ String fsval;
   
-  ArrayList<Float> arrList=new ArrayList<Float>();
+
 
  //load in file
- String[] lines=loadStrings("NewYorkTemp.csv");
- for(String s:lines)
-  {
-    fsval=s;
-    float fval= Float.parseFloat(fsval);
-    arrList.add(fval);
-  }
+ loadData();
+}
+void draw()
+{
+  background(0);
+  stroke(200, 200, 200);
+  fill(200, 200, 200);
+  drawAxis();
+}
   
-  for( int  i=0;i<arrList.size();i++)
-  {
-    count++;
-    sum+=arrList.get(i);
+void loadData()
+{
+ String[] strings = loadStrings("NewYorkTemp.csv");
+ println("Year\tColdest\tHottest");
+ for(int i=0;i<30;i++)  
+ {
+   print("-");
+ }
+ println("");
   
-     if(arrList.get(i)>high)
+ for(String s:strings)
+ {
+   println(s);
+   String[] line = s.split(",");
+    
+   ArrayList<Float> lineData = new ArrayList<Float>();
+    
+   // Start at 1, so we skip the first one 
+   for (int i = 1 ; i < line.length ; i ++)
+   {
+     lineData.add(Float.parseFloat(line[i]));
+     if(i==1)
      {
-       high=arrList.get(i); 
-       highIndex=i;
+       sumC += Float.parseFloat(line[i]);
      }
-     if(arrList.get(i)<low)
+     else
      {
-       low=arrList.get(i);
-       lowIndex=i;
+       sumH += Float.parseFloat(line[i]);      
      }
-  }
- /* //calculate the average
-  avg= sum/count;
-  //change code to print year 1887-2015
+     count++;
+     data.add(lineData);
+   }
+ }
+ //calculate the average
+ avgC  = sumC/count ;
+ avgH  = sumH/count ;
+ //change code to print year 1887-2015
 
-  println("Dryist year was ",(start+lowIndex), " With ", low, "mm of rain"); 
-  println("Wettest year was ",(start+highIndex), "With ", high, "mm of rain");
-  println("the average rain over the ", count, "years was ", avg, "mm of rain");
-  
-  //code to make a line graph
-  
+ println("The average hot weather was ",(avgH), " \nWith average cold weather being ", (avgC), " degrees farinheight"); 
+}//end load data
+/*
+//code to make a line graph
+void linegraph()
+{
   float border = width * 0.1f;
-      drawAxis(arrList, years, 15, 150.0, border);
+  for(int i = 1 ; i < count ; i ++)
+  {
+    for(int j = 1 ; j < count ; j ++)
+    {
+      drawAxis(data[i][j], years, 15, 150.0, border);
       stroke(200);
       fill(200);
-      
-      
+        
+        
       float windowRange = (width - (border * 2.0f));
       float dataRange = 150;      
       float lineWidth =  windowRange / (float) (years.length - 1) ;
-      
+        
       float scale = windowRange / dataRange;
       for (int i = 1 ; i < arrList.size() ; i ++)
       {
@@ -79,12 +109,12 @@ void setup()
         float y2 = (height - border) - (arrList.get(i)) * scale;
         line(x1, y1, x2, y2);
       }  
-  */
-}/*
+    }
+  }
+}
+
 void drawAxis(ArrayList<Float> data, String[] horizLabels, int verticalIntervals, float vertDataRange, float border)
 {
-  
-  
   stroke(0,255,255);
   fill(0,255,255);  
   int j=0; 
@@ -97,21 +127,19 @@ void drawAxis(ArrayList<Float> data, String[] horizLabels, int verticalIntervals
   //data.size()
     
   for (int i = 0 ; i < data.size() ; i +=16)
-  {  
-   
-   // Draw the ticks
-   float x = border + (i * horizInterval);
+  {
+    // Draw the ticks
+    float x = border + (i * horizInterval);
     line(x, height - (border - tickSize), x, (height - border));
-   float textY = height - (border * 0.5f);
+    float textY = height - (border * 0.5f);
    
-   // Print the text 
-   textAlign(CENTER, CENTER);
+     // Print the text 
+     textAlign(CENTER, CENTER);
    
-   text(horizLabels[j].substring(0, 4), x, textY);
-   j++;
-     
-   
-  }
+     text(horizLabels[j].substring(0, 4), x, textY);
+     j++;
+       
+  }//end for
   
   // Draw the vertical axis
   line(border, border , border, height - border);
@@ -127,7 +155,32 @@ void drawAxis(ArrayList<Float> data, String[] horizLabels, int verticalIntervals
         
     textAlign(RIGHT, CENTER);  
     text((int)hAxisLabel, border - (tickSize * 2.0f), y);
-  } 
+  }// end for 
   
-}
+}//end draw axis
 */
+
+// draw a graph border
+void drawAxis()
+{
+   stroke(255);
+   fill(255);
+   float x,x1;
+   float y,y1;
+   x1=50;
+   x=450;
+   y1=50;
+   y=450;
+   line(x1,y,x,y);
+   line(x1,y1,x1,y);
+   
+   if(mouseX <450 && mouseX>50 && mouseY <450 && mouseY>50)
+  {
+    stroke(255,0,0);
+    fill(0,255,0);
+    line(mouseX,y1,mouseX,y);
+ 
+    ellipse(mouseX,mouseY,20,20);
+    println(mouseX,mouseY);
+  }
+}
