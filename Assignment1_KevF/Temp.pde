@@ -4,6 +4,7 @@ class Temp
   int year;
   float cold;
   float hot;
+  
   Temp(String line)
   {
     String[] fields = line.split(",");
@@ -12,4 +13,5 @@ class Temp
     cold = Float.parseFloat(fields[1]);
     hot = Float.parseFloat(fields[2]);
   }
+  
 }
