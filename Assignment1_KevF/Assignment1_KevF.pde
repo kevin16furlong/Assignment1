@@ -1,9 +1,22 @@
-/*
-Used for playing music. didnt get it working
-import ddf.minim.*;
+//import for gui
+import controlP5.*;
 
+//imports for music
+import ddf.minim.spi.*;
+import ddf.minim.signals.*;
+import ddf.minim.*;
+import ddf.minim.analysis.*;
+import ddf.minim.ugens.*;
+import ddf.minim.effects.*;
+
+//controlp5 objects
+ControlP5 cp5;
+ControlP5 cp6;
+
+//Declare variables related to music
 Minim minim;
-*/
+AudioPlayer player;
+int muteValue=0;
 
 //useful variables
   PVector pos;
@@ -33,8 +46,20 @@ void setup()
  loadData();
  calcMinMax();
  border = width * 0.1f;
- songs = new ArrayList<Songs>();
- Love love= new Love();
+ cp5 = new ControlP5(this);
+   //setup cp5 buttons for navigating
+   cp5.addButton("drawLineGraph").setValue(10).setPosition(100,height-40).setSize(80,20).setLabel("Line Graph");
+   cp5.addButton("draw3Dgraph").setValue(2).setPosition(200,height-40).setSize(80,20).setLabel("3D Graph");
+   cp5.addButton("displayStatistics").setValue(3).setPosition(300, height-40).setSize(80,20).setLabel("Data Statistics");
+   cp5.addButton("changeSong").setValue(4).setPosition(400,height-40).setSize(80,20).setLabel("Change Song");
+   cp5.addButton("muteMusic").setValue(5).setPosition(500,height-40).setSize(80,20).setLabel("Mute Music");
+   cp5.addButton("controls").setValue(6).setPosition(600,height-40).setSize(80,20).setLabel("Display Controls");
+   cp5.addButton("about").setValue(7).setPosition(700, height-40).setSize(80,20).setLabel("About This Project");
+
+   //set custom song to play
+    minim = new Minim(this);
+    player = minim.loadFile("LoveShack.mp3",2048);
+    player.loop();
  
  //minim = new Minim(this);
  
@@ -255,8 +280,9 @@ void draw()
           
           for(int i = songs.size() - 1 ; i >= 0   ;i --)
           {
-            if(i==5)
+            if(i==10)
             {
+              
               break;
             }
             else
@@ -267,16 +293,13 @@ void draw()
             }
           } 
           
-            if (frameCount %180 ==0)
+            if (frameCount %60 ==0)
             {
              Songs love = new Love();
              songs.add(love);
              
             }
-           
-        
-       
-     
+                
      break;
     }
     
@@ -306,10 +329,7 @@ void draw()
       
       break;  
     }
-    default:
-    {
-      text("error please press 0-4 only", X,Y+40);
-    }
+
   }
     
    
