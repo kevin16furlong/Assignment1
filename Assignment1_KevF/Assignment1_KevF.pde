@@ -1,3 +1,4 @@
+
 //import for gui
 import controlP5.*;
 
@@ -27,7 +28,8 @@ int muteValue=0;
   float speed = 5.0f;
   float X=50;
   float Y =50;
-  //AudioPlayer audio;
+  int set;
+ 
   
 // arrayfor holding data
 ArrayList<Songs> songs = new ArrayList<Songs>();
@@ -42,32 +44,46 @@ float min, max, minc,maxc;
 
 void setup()
 {
- size(500, 500);
+ set = 0;
+ size(700, 600);
  loadData();
  calcMinMax();
  border = width * 0.1f;
+ 
  cp5 = new ControlP5(this);
-   //setup cp5 buttons for navigating
-   cp5.addButton("drawLineGraph").setValue(10).setPosition(100,height-40).setSize(80,20).setLabel("Line Graph");
-   cp5.addButton("draw3Dgraph").setValue(2).setPosition(200,height-40).setSize(80,20).setLabel("3D Graph");
-   cp5.addButton("displayStatistics").setValue(3).setPosition(300, height-40).setSize(80,20).setLabel("Data Statistics");
-   cp5.addButton("changeSong").setValue(4).setPosition(400,height-40).setSize(80,20).setLabel("Change Song");
-   cp5.addButton("muteMusic").setValue(5).setPosition(500,height-40).setSize(80,20).setLabel("Mute Music");
-   cp5.addButton("controls").setValue(6).setPosition(600,height-40).setSize(80,20).setLabel("Display Controls");
-   cp5.addButton("about").setValue(7).setPosition(700, height-40).setSize(80,20).setLabel("About This Project");
+ /*  //setup cp5 buttons for navigating
+   cp5.addButton("Home").setValue(1).setPosition(20,height-40).setSize(80,20).setLabel("Line Graph");
+   cp5.addButton("HotLineGraph").setValue(2).setPosition(100,height-40).setSize(80,20).setLabel("Hot Graph");
+   cp5.addButton("ColdLineGraph").setValue(3).setPosition(180, height-40).setSize(80,20).setLabel("Cold Graph");
+   cp5.addButton("twolineGraphs").setValue(4).setPosition(260,height-40).setSize(80,20).setLabel("Full LineGraph");
+   cp5.addButton("WeatherSpirils").setValue(5).setPosition(340,height-40).setSize(80,20).setLabel("Spirils");*/
+   cp5.addButton("Unmute").setValue(6).setPosition(420,height-40).setSize(80,20).setLabel("UnMute");
+   cp5.addButton("Mute").setValue(7).setPosition(500,height-40).setSize(80,20).setLabel("Mute Music");/*
+   cp5.addButton("printValues").setValue(8).setPosition(580, height-40).setSize(80,20).setLabel("Print Values");*/
 
    //set custom song to play
     minim = new Minim(this);
     player = minim.loadFile("LoveShack.mp3",2048);
     player.loop();
  
- //minim = new Minim(this);
  
  //textMode(SHAPE);
  color[] colors = new color[data.size()];
  
 }// end setup
+//code for muteing music
+void Mute()
+{
+   player.mute();
 
+   
+}
+//code to change song
+void Unmute()
+{
+  player.unmute();
+
+}
 
 //code to check keys
 void keyPressed() // used fortaking input form numbers
@@ -77,23 +93,8 @@ void keyPressed() // used fortaking input form numbers
     mode = key - '0';
   }
   println(mode);
- /* int k = key - '0';  
   
-  if (k >= 0 && k < songs.size())
-  {
-    songs.get(k).speak();
-  }
-  */
 }
-
-//code for sounds
-/*void speak()
-  {
-    audio.rewind();
-    audio.play();
-    
-  }*/
-
 
 // Code forloading data
 void loadData()
@@ -138,9 +139,6 @@ void calcMinMax()
 // option 1 continued
 void drawLineGraph()
 {
-  stroke(255);
-   
-  
   stroke(255);  
   line(border - 5, height - border, width - border, height - border);
   line(border, border, border, height - border + 5);
@@ -155,6 +153,17 @@ void drawLineGraph()
     float y2 = map(data.get(i).hot, min, max, height - border, border);
     line(x1, y1, x2, y2);
     
+    text(data.get(i).hot,border-60,y2);
+    
+     if(i % 2 == 1)
+    {
+      text(data.get(i).year,x1+8,height-60);
+    }
+    else
+    {
+      text(data.get(i).year,x1+8,height-50);
+    }
+    
  
   }  
 }
@@ -163,8 +172,10 @@ void drawLineGraphC()
 {
   stroke(255);
   stroke(255);  
-  line(border - 5, height - border, width - border, height - border);
+ // line(border - 5, height - border, width - border, height - border);
   line(border, border, border, height - border + 5);
+  //line(border - 5, width-border ,height - border, width - border);
+
   
   for (int i = 1 ; i < data.size() ; i ++)
   {
@@ -174,7 +185,18 @@ void drawLineGraphC()
     float x2 = map(i, 0, data.size() - 1, border, width - border);
     float y2 = map(data.get(i).cold, minc, maxc, height - border, border);
     line(x1, y1, x2, y2);
+    stroke(0,0,255);
+    text(data.get(i).cold,width-border,y2);
+    if(i % 2 == 1)
+    {
+      text(data.get(i).year,x1+8,height-60);
+    }
+    else
+    {
+      text(data.get(i).year,x1+8,height-50);
+    }
   }  
+
 }
 
 // graphic line to follow graph
@@ -218,120 +240,162 @@ color randomColor()
 
 void draw()
 {
-  background(0);
-  
-   switch (mode)
-  {    
+  if(set==0)
+  {
+    
+    Home();
+  }
+  switch(mode)
+  {
     case 0:
-      fill(255,255,255);
-      stroke(255,255,255);
-      text("Hi and welcome to kevs project\n",X,Y);
-      text("please choose an option between 0 & 4\n",X,Y+20);    
-      
-      
-      for (int i = 0 ; i < data.size() ; i ++)
-      {
-        float x = i * border;
-        fill(randomColor());
-        stroke(randomColor());
-        rect(x, data.get(i).hot+(height/2), Y , - (data.get(i).hot));
-      }  
+    {
+      Home();
       break;
+    }
     case 1:
     {
-       text("Graph to show the warm weather differences in NYC frmo 1900-2015\n",X,Y);
-       drawLineGraph();
-       drawTemphot();
+      HotLineGraph();
       break;
-    }      
-  case 2:
-  {
-      text("Graph to show the cold weather differences in NYC frmo 1900-2015\n",X,Y);
-      drawLineGraphC();
-      drawTempCold();
-      
+    }
+    case 2:
+    {
+      ColdLineGraph();
       break;
-  }  
-   
+    }
     case 3:
     {
-      drawLineGraphC();
-      drawLineGraph();
-      drawTempCold();
-      drawTemphot();
-      
-      break;  
-    } 
-    
-    case 4:
-   {
-               
-          for(int i=0;i<data.size();i++)
-          {
-          println(data.get(i).year, ", " , data.get(i).cold, ", " ,data.get(i).hot, ".");
-           
-          stroke(255,0,0);
-          ellipse(X+100, Y+100,data.get(i).hot*5,data.get(i).hot*5);
-          
-          stroke(0,0,255);          
-          ellipse(X+300, Y+300,data.get(i).cold*10,data.get(i).cold*10);
-          
-          }
-          
-          for(int i = songs.size() - 1 ; i >= 0   ;i --)
-          {
-            if(i==10)
-            {
-              
-              break;
-            }
-            else
-            {
-            Songs go = songs.get(i);
-            go.update();
-            go.render();
-            }
-          } 
-          
-            if (frameCount %60 ==0)
-            {
-             Songs love = new Love();
-             songs.add(love);
-             
-            }
-                
-     break;
+      twolineGraphs();
+      break;
     }
-    
-    
+    case 4:
+    {
+      WeatherSpirils();
+      break;
+    }
     case 5:
     {
-    float temp;
-    float j = Y+60;
-    int YEAR;
-    int COLD;
-    int HOT;
-    //fill in some graph
-    text("Year,   TempCold, TempHot",X,j-20);
-    for(int i = 0 ; i < data.size();i++)
-    {
-      
-     j+=10;
-     YEAR=(int)data.get(i).year;
-     COLD=(int)data.get(i).cold;
-     HOT=(int)data.get(i).hot;
-     
-      
-      text(YEAR ,X,j); 
-      text(COLD,X+60,j);
-      text(HOT, X+120,j);
+      printValues();
+      break;
     }
-      
-      break;  
-    }
-
-  }
     
-   
+  }
+}
+             
+//print home screen
+void Home()
+{
   
+  background(0);
+  fill(255,255,255);
+  stroke(255,255,255);
+  text("Hi and welcome to kevs project",X,Y);
+  text("Please choose options of input 0-5",X,Y+20);
+  set=1;
+  for (int i = 0 ; i < data.size() ; i ++)
+  {
+    Float x = i * border;
+    fill(randomColor());
+    stroke(randomColor());
+    rect(x, data.get(i).hot+(height/2), Y , - (data.get(i).hot));
+  }  
+}
+
+// print Hot weather line graph
+void HotLineGraph()
+{
+  background(0);
+  fill(255,255,255);
+  stroke(255,255,255);
+  set=2;
+  text("Graph to show the warm weather differences in NYC frmo 1900-2015\n",X,Y);
+  drawLineGraph();
+  drawTemphot();
+}
+
+//print cold weather line graph
+void ColdLineGraph()
+{
+  background(0);
+  fill(255,255,255);
+  stroke(255,255,255);
+  set=3;
+  text("Graph to show the cold weather differences in NYC frmo 1900-2015\n",X,Y);
+  drawLineGraphC();
+  drawTempCold();
+}
+        
+//print both line graphs
+void twolineGraphs()
+{
+  background(0);
+  fill(255,255,255);
+  stroke(255,255,255);
+  set=4;
+  drawLineGraphC();
+  drawLineGraph();
+  drawTempCold();
+  drawTemphot();
+}
+
+//print out Circles to represent weather data
+void WeatherSpirils()
+{
+  background(0);
+  fill(255,255,255);
+  stroke(255,255,255);
+  set=5;
+  for(int i=0;i<data.size();i++)
+  {
+    println(data.get(i).year, ", " , data.get(i).cold, ", " ,data.get(i).hot, ".");
+    stroke(255,0,0);
+    ellipse(X+100, Y+100,data.get(i).hot*5,data.get(i).hot*5);
+    stroke(0,0,255);          
+    ellipse(X+300, Y+300,data.get(i).cold*10,data.get(i).cold*10);
+  }
+  for(int i = songs.size() - 1 ; i >= 0   ;i --)
+  {
+    if(i==10)
+    {
+      break;
+    }
+    else
+    {
+      Songs go = songs.get(i);
+      go.update();
+      go.render();
+    }
+   }
+   if (frameCount %60 ==0)
+   {
+     Songs love = new Love();
+     songs.add(love);           
+    }
+}
+        
+//print out values for weather
+void printValues()
+{
+  background(0);
+  fill(255,255,255);
+  stroke(255,255,255);
+  set=8;
+  float temp;
+  float j = Y+60;
+  int YEAR;
+  int COLD;
+  int HOT;
+  //fill in some graph
+  text("Year,   TempCold, TempHot",X,j-20);
+  for(int i = 0 ; i < data.size();i++)
+  {
+    j+=10;
+    YEAR=(int)data.get(i).year;
+    COLD=(int)data.get(i).cold;
+    HOT=(int)data.get(i).hot;
+
+    text(YEAR ,X,j); 
+    text(COLD,X+60,j);
+    text(HOT, X+120,j);
+             
+   }
 }
