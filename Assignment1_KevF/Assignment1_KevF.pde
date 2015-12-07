@@ -51,7 +51,9 @@ void setup()
  border = width * 0.1f;
  
  cp5 = new ControlP5(this);
- /*  //setup cp5 buttons for navigating
+ // had implemented these but for saome reason my methods all stopped refreshing or updating when used, 
+ //so reverted back to input based code
+ /*  //setup cp5 buttons for navigating 
    cp5.addButton("Home").setValue(1).setPosition(20,height-40).setSize(80,20).setLabel("Line Graph");
    cp5.addButton("HotLineGraph").setValue(2).setPosition(100,height-40).setSize(80,20).setLabel("Hot Graph");
    cp5.addButton("ColdLineGraph").setValue(3).setPosition(180, height-40).setSize(80,20).setLabel("Cold Graph");
@@ -63,7 +65,7 @@ void setup()
 
    //set custom song to play
     minim = new Minim(this);
-    player = minim.loadFile("LoveShack.mp3",2048);
+    player = minim.loadFile("FairytaleOfNewYork.mp3",2048);
     player.loop();
  
  
@@ -137,7 +139,7 @@ void calcMinMax()
 }
 
 // option 1 continued
-void drawLineGraph()
+void drawLineGraphHot()
 {
   stroke(255);  
   line(border - 5, height - border, width - border, height - border);
@@ -172,9 +174,10 @@ void drawLineGraphC()
 {
   stroke(255);
   stroke(255);  
- // line(border - 5, height - border, width - border, height - border);
-  line(border, border, border, height - border + 5);
-  //line(border - 5, width-border ,height - border, width - border);
+  line(border - 5, height - border, width - border, height - border);
+  line(border, border, border, height - border );
+  
+  
 
   
   for (int i = 1 ; i < data.size() ; i ++)
@@ -186,7 +189,7 @@ void drawLineGraphC()
     float y2 = map(data.get(i).cold, minc, maxc, height - border, border);
     line(x1, y1, x2, y2);
     stroke(0,0,255);
-    text(data.get(i).cold,width-border,y2);
+    text(data.get(i).cold,border-60,y2);
     if(i % 2 == 1)
     {
       text(data.get(i).year,x1+8,height-60);
@@ -197,6 +200,91 @@ void drawLineGraphC()
     }
   }  
 
+}
+
+//draw double line graph
+void drawLineGraph()
+{
+  stroke(255);  
+  line(border - 5, height - border, width - border, height - border);
+  line(border, border, border, height - border + 5);
+  
+  for (int i=0;i<90;i+=10)
+  {
+    if(i<30)
+    {
+      text(i,border-20,height-((i+10)*6));
+    }
+    else
+    {
+      text(i,border-20,height-((i+8)*6));
+    }
+    
+  }
+  for (int i = 1 ; i < data.size() ; i ++)
+  {
+    stroke(255, 0, 0);
+    float x1 = map(i - 1, 0, data.size() - 1, border, width - border);
+    float y1 = map(data.get(i - 1).hot, 0, 80, height - border, border);
+    float x2 = map(i, 0, data.size() - 1, border, width - border);
+    float y2 = map(data.get(i).hot, 0, 80, height - border, border);
+    line(x1, y1, x2, y2);
+    
+    //text(data.get(i).hot,border-60,y2);
+    
+     if(i % 2 == 1)
+    {
+      text(data.get(i).year,x1+8,height-60);
+    }
+    else
+    {
+      text(data.get(i).year,x1+8,height-50);
+    }
+  }
+  for (int i = 1 ; i < data.size() ; i ++)
+  {
+    stroke(0, 0, 255);
+    float x1 = map(i - 1, 0, data.size() - 1, border, width - border);
+    float y1 = map(data.get(i - 1).cold, 0, 80, height - border, border);
+    float x2 = map(i, 0, data.size() - 1, border, width - border);
+    float y2 = map(data.get(i).cold, 0, 80, height - border, border);
+    line(x1, y1, x2, y2);
+    stroke(0,0,255);
+    //text(data.get(i).cold,width-border,y2);
+    if(i % 2 == 1)
+    {
+      text(data.get(i).year,x1+8,height-60);
+    }
+    else
+    {
+      text(data.get(i).year,x1+8,height-50);
+    }
+  }  
+    if (mouseX >= border && mouseX <= width - border)
+  {
+    stroke(255, 0, 0);
+    fill(255, 0, 0);
+    line(mouseX, border, mouseX, height - border);
+    int i = (int) map(mouseX, border, width - border, 0, data.size() - 1);
+    float y = map(data.get(i).hot, 0, 80, height - border, border);
+    ellipse(mouseX, y, 5, 5);
+    fill(255);
+    text("Year: " + data.get(i).year, mouseX + 10, y);
+    text("Temprature: " + data.get(i).hot, mouseX + 10, y + 10);
+  }
+   if (mouseX >= border && mouseX <= width - border)
+  {
+    stroke(0, 0, 255);
+    fill(0, 0, 255);
+    line(mouseX, border, mouseX, height - border);
+    int i = (int) map(mouseX, border, width - border, 0, data.size() - 1);
+    float y = map(data.get(i).cold, 0, 80, height - border, border);
+    ellipse(mouseX, y, 5, 5);
+    fill(255);
+    text("Year: " + data.get(i).year, mouseX + 10, y+20);
+    text("Temprature: " + data.get(i).cold, mouseX + 10, y + 30);
+  }
+ 
 }
 
 // graphic line to follow graph
@@ -308,7 +396,7 @@ void HotLineGraph()
   stroke(255,255,255);
   set=2;
   text("Graph to show the warm weather differences in NYC frmo 1900-2015\n",X,Y);
-  drawLineGraph();
+  drawLineGraphHot();
   drawTemphot();
 }
 
@@ -331,10 +419,9 @@ void twolineGraphs()
   fill(255,255,255);
   stroke(255,255,255);
   set=4;
-  drawLineGraphC();
+  
   drawLineGraph();
-  drawTempCold();
-  drawTemphot();
+  
 }
 
 //print out Circles to represent weather data
@@ -346,7 +433,7 @@ void WeatherSpirils()
   set=5;
   for(int i=0;i<data.size();i++)
   {
-    println(data.get(i).year, ", " , data.get(i).cold, ", " ,data.get(i).hot, ".");
+    //println(data.get(i).year, ", " , data.get(i).cold, ", " ,data.get(i).hot, ".");
     stroke(255,0,0);
     ellipse(X+100, Y+100,data.get(i).hot*5,data.get(i).hot*5);
     stroke(0,0,255);          
@@ -393,7 +480,7 @@ void printValues()
     COLD=(int)data.get(i).cold;
     HOT=(int)data.get(i).hot;
 
-    text(YEAR ,X,j); 
+    text(YEAR,X,j); 
     text(COLD,X+60,j);
     text(HOT, X+120,j);
              
