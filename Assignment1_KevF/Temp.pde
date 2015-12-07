@@ -1,3 +1,4 @@
+//this class was used to take in the values from the data sheet.
 
 class Temp
 {

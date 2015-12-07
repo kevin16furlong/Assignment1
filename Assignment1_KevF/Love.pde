@@ -3,6 +3,9 @@ class Love extends Songs
    //AudioPlayer audio;
 
  /*
+ did not end up using this code in the end program
+ originally set up these classes (love & songs) to play music, 
+ love refering to a certain song being used, but as codig went on i scrapped that idea but kept the classes to make rotating objects.
  void speak()
   {
     audio.rewind();
@@ -22,7 +25,7 @@ class Love extends Songs
     
   }
   
- 
+ //updating the position of an object
  void update()
   {
     

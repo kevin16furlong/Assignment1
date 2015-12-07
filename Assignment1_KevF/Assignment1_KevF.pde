@@ -29,13 +29,13 @@ int muteValue=0;
   float X=50;
   float Y =50;
   int set;
+  int mode = 0;
  
   
 // arrayfor holding data
 ArrayList<Songs> songs = new ArrayList<Songs>();
 ArrayList<Temp> data = new ArrayList<Temp>();
 
-String [] years ={"1900","1910","1920","1930","1940","1950","1960","1970","1980","1990","2000","2010"};
 
 float border;
 float min, max, minc,maxc;
@@ -65,6 +65,7 @@ void setup()
 
    //set custom song to play
     minim = new Minim(this);
+    //song choice picked due to data being weather in new york, and time of year of project.
     player = minim.loadFile("FairytaleOfNewYork.mp3",2048);
     player.loop();
  
@@ -73,6 +74,13 @@ void setup()
  color[] colors = new color[data.size()];
  
 }// end setup
+
+//code for picking random color
+color randomColor()
+{
+  return color(random(0, 255), random(0, 255), random(0, 255));
+}
+
 //code for muteing music
 void Mute()
 {
@@ -80,7 +88,7 @@ void Mute()
 
    
 }
-//code to change song
+//code to unmute song
 void Unmute()
 {
   player.unmute();
@@ -109,7 +117,7 @@ void loadData()
   }
 }//end load data
 
-// option 1
+// calculating min and max tempratures
 void calcMinMax()
 {
   min = max = data.get(0).hot; 
@@ -138,7 +146,7 @@ void calcMinMax()
   }
 }
 
-// option 1 continued
+// drawing the Hot temprature line graph
 void drawLineGraphHot()
 {
   stroke(255);  
@@ -159,27 +167,26 @@ void drawLineGraphHot()
     
      if(i % 2 == 1)
     {
+      //print the odd years
       text(data.get(i).year,x1+8,height-60);
     }
     else
     {
+      //print the even years
       text(data.get(i).year,x1+8,height-50);
     }
     
  
   }  
 }
-//option2
+// drawing the cold temprature line graph
 void drawLineGraphC()
 {
   stroke(255);
   stroke(255);  
   line(border - 5, height - border, width - border, height - border);
   line(border, border, border, height - border );
-  
-  
-
-  
+    
   for (int i = 1 ; i < data.size() ; i ++)
   {
     stroke(0, 0, 255);
@@ -189,13 +196,16 @@ void drawLineGraphC()
     float y2 = map(data.get(i).cold, minc, maxc, height - border, border);
     line(x1, y1, x2, y2);
     stroke(0,0,255);
+    //print the temp values
     text(data.get(i).cold,border-60,y2);
     if(i % 2 == 1)
     {
+      //print the odd years
       text(data.get(i).year,x1+8,height-60);
     }
     else
     {
+      //print the even years
       text(data.get(i).year,x1+8,height-50);
     }
   }  
@@ -208,9 +218,10 @@ void drawLineGraph()
   stroke(255);  
   line(border - 5, height - border, width - border, height - border);
   line(border, border, border, height - border + 5);
-  
+  //print values 1-80
   for (int i=0;i<90;i+=10)
   {
+    //for some reason in the code the values for the cold were matching up, but the hot were not so i spaced them slightly differently so it would work out.
     if(i<30)
     {
       text(i,border-20,height-((i+10)*6));
@@ -220,7 +231,8 @@ void drawLineGraph()
       text(i,border-20,height-((i+8)*6));
     }
     
-  }
+  }//end print values
+  
   for (int i = 1 ; i < data.size() ; i ++)
   {
     stroke(255, 0, 0);
@@ -229,9 +241,7 @@ void drawLineGraph()
     float x2 = map(i, 0, data.size() - 1, border, width - border);
     float y2 = map(data.get(i).hot, 0, 80, height - border, border);
     line(x1, y1, x2, y2);
-    
-    //text(data.get(i).hot,border-60,y2);
-    
+    //print years    
      if(i % 2 == 1)
     {
       text(data.get(i).year,x1+8,height-60);
@@ -241,6 +251,7 @@ void drawLineGraph()
       text(data.get(i).year,x1+8,height-50);
     }
   }
+  //draw line line for cold values
   for (int i = 1 ; i < data.size() ; i ++)
   {
     stroke(0, 0, 255);
@@ -250,16 +261,10 @@ void drawLineGraph()
     float y2 = map(data.get(i).cold, 0, 80, height - border, border);
     line(x1, y1, x2, y2);
     stroke(0,0,255);
-    //text(data.get(i).cold,width-border,y2);
-    if(i % 2 == 1)
-    {
-      text(data.get(i).year,x1+8,height-60);
-    }
-    else
-    {
-      text(data.get(i).year,x1+8,height-50);
-    }
-  }  
+    
+  }  //end printing cold
+  
+  //print both lines to give current point values
     if (mouseX >= border && mouseX <= width - border)
   {
     stroke(255, 0, 0);
@@ -303,6 +308,7 @@ void drawTemphot()
     text("Temprature: " + data.get(i).hot, mouseX + 10, y + 10);
   }
 }
+//graphic line to follow cold graph
 void drawTempCold()
 {
   if (mouseX >= border && mouseX <= width - border)
@@ -317,14 +323,7 @@ void drawTempCold()
     text("Year: " + data.get(i).year, mouseX + 10, y+20);
     text("Temprature: " + data.get(i).cold, mouseX + 10, y + 30);
   }
-}
-
-int mode = 0;
-
-color randomColor()
-{
-  return color(random(0, 255), random(0, 255), random(0, 255));
-}
+}//end graphic lines for graphs
 
 void draw()
 {
@@ -422,7 +421,7 @@ void twolineGraphs()
   
   drawLineGraph();
   
-}
+}//end draw two line graphs
 
 //print out Circles to represent weather data
 void WeatherSpirils()
@@ -433,12 +432,14 @@ void WeatherSpirils()
   set=5;
   for(int i=0;i<data.size();i++)
   {
-    //println(data.get(i).year, ", " , data.get(i).cold, ", " ,data.get(i).hot, ".");
+    //in this code it was just drawing circles using line data taken in
     stroke(255,0,0);
     ellipse(X+100, Y+100,data.get(i).hot*5,data.get(i).hot*5);
     stroke(0,0,255);          
     ellipse(X+300, Y+300,data.get(i).cold*10,data.get(i).cold*10);
   }
+  // this code below is to print rotating objects also representing the values from the data
+  //aka a random bit of fun. using code learned from game coded in class
   for(int i = songs.size() - 1 ; i >= 0   ;i --)
   {
     if(i==10)
@@ -457,7 +458,7 @@ void WeatherSpirils()
      Songs love = new Love();
      songs.add(love);           
     }
-}
+}// end print circles
         
 //print out values for weather
 void printValues()
@@ -485,4 +486,4 @@ void printValues()
     text(HOT, X+120,j);
              
    }
-}
+}//end print weather values
